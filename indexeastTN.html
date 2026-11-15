@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smokies Weekend Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="What's on this weekend in Knoxville, Pigeon Forge and Gatlinburg, Tennessee. Filter events by town, day and type, and save your plan.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Smokies Weekend Planner">
+<meta property="og:description" content="This weekend's events in Knoxville, Pigeon Forge and Gatlinburg, filtered your way.">
+<meta name="theme-color" content="#eef2f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1524" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* ============================================================
+   HAZE HOUR — design tokens
+   Layout: editorial 12-col grid. Hero = WebGL fog through five ridges, with the
+   weekend's dates set oversized and deliberately breaking the right edge.
+   Sections sit on "ridge bands". Top 5 rank numerals hang into the left margin
+   (second deliberate grid break). Page sky deepens from haze to night on scroll.
+   ============================================================ */
+:root{
+  /* color — light (dusk haze) */
+  --paper:oklch(0.97 0.01 240);
+  --paper-2:oklch(0.935 0.016 242);
+  --paper-3:oklch(0.90 0.022 244);
+  --ink:oklch(0.20 0.03 260);
+  --ink-2:oklch(0.42 0.03 255);
+  --line:oklch(0.86 0.02 245);
+  --haze:oklch(0.72 0.07 245);
+  --haze-deep:oklch(0.48 0.08 252);
+  --ember:oklch(0.70 0.17 45);
+  --ember-text:oklch(0.52 0.16 40);
+  --on-ember:oklch(0.20 0.04 40);
+  --pine:oklch(0.38 0.06 165);
+  --night-tint:oklch(0.30 0.06 262);
+  --knx:oklch(0.50 0.14 45);  --knx-bg:oklch(0.94 0.04 60);
+  --pf:oklch(0.48 0.16 12);   --pf-bg:oklch(0.94 0.035 12);
+  --gat:oklch(0.45 0.08 200); --gat-bg:oklch(0.94 0.03 200);
+  --kid-bg:oklch(0.95 0.05 92); --kid-line:oklch(0.80 0.12 85); --kid-ink:oklch(0.40 0.09 70);
+  --free-bg:oklch(0.94 0.05 160); --free-ink:oklch(0.40 0.09 160);
+  --glass:oklch(0.97 0.01 240 / .82);
+  /* type */
+  --font-display:"Instrument Serif","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --font-text:Geist,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --step--1:clamp(.8rem,.78rem + .1vw,.86rem);
+  --step-0:clamp(.98rem,.95rem + .15vw,1.06rem);
+  --step-1:clamp(1.18rem,1.1rem + .35vw,1.38rem);
+  --step-2:clamp(1.5rem,1.3rem + .9vw,2rem);
+  --step-3:clamp(2rem,1.6rem + 1.8vw,3rem);
+  --step-4:clamp(2.8rem,2rem + 4vw,5.4rem);
+  --step-5:clamp(6rem,3rem + 16vw,17rem);
+  /* space */
+  --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.5rem; --s-6:2rem; --s-7:3rem; --s-8:4.5rem; --s-9:7rem;
+  /* radius */
+  --r-sm:6px; --r-md:12px; --r-lg:20px; --r-pill:999px;
+  /* shadow */
+  --sh-1:0 1px 2px oklch(0.2 0.03 260 / .06);
+  --sh-2:0 1px 2px oklch(0.2 0.03 260 / .06), 0 12px 32px -16px oklch(0.2 0.05 260 / .28);
+  /* motion */
+  --dur-fast:140ms; --dur-med:260ms; --dur-slow:640ms;
+  --ease-out:cubic-bezier(.22,1,.36,1); --ease-in-out:cubic-bezier(.65,0,.35,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:oklch(0.17 0.025 262); --paper-2:oklch(0.21 0.03 260); --paper-3:oklch(0.26 0.035 258);
+  --ink:oklch(0.95 0.01 240); --ink-2:oklch(0.76 0.03 245); --line:oklch(0.31 0.03 256);
+  --haze:oklch(0.72 0.07 245); --haze-deep:oklch(0.80 0.07 245);
+  --ember:oklch(0.75 0.16 50); --ember-text:oklch(0.80 0.13 55); --on-ember:oklch(0.18 0.04 40);
+  --pine:oklch(0.74 0.08 165); --night-tint:oklch(0.08 0.03 262);
+  --knx:oklch(0.80 0.12 55); --knx-bg:oklch(0.30 0.06 50);
+  --pf:oklch(0.78 0.12 12);  --pf-bg:oklch(0.30 0.07 12);
+  --gat:oklch(0.80 0.08 200); --gat-bg:oklch(0.30 0.05 205);
+  --kid-bg:oklch(0.27 0.05 85); --kid-line:oklch(0.50 0.09 85); --kid-ink:oklch(0.88 0.10 88);
+  --free-bg:oklch(0.28 0.05 160); --free-ink:oklch(0.84 0.09 160);
+  --glass:oklch(0.17 0.025 262 / .8);
+  --sh-2:0 1px 2px oklch(0 0 0 / .3), 0 14px 36px -18px oklch(0 0 0 / .8);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:oklch(0.17 0.025 262); --paper-2:oklch(0.21 0.03 260); --paper-3:oklch(0.26 0.035 258);
+  --ink:oklch(0.95 0.01 240); --ink-2:oklch(0.76 0.03 245); --line:oklch(0.31 0.03 256);
+  --haze:oklch(0.72 0.07 245); --haze-deep:oklch(0.80 0.07 245);
+  --ember:oklch(0.75 0.16 50); --ember-text:oklch(0.80 0.13 55); --on-ember:oklch(0.18 0.04 40);
+  --pine:oklch(0.74 0.08 165); --night-tint:oklch(0.08 0.03 262);
+  --knx:oklch(0.80 0.12 55); --knx-bg:oklch(0.30 0.06 50);
+  --pf:oklch(0.78 0.12 12);  --pf-bg:oklch(0.30 0.07 12);
+  --gat:oklch(0.80 0.08 200); --gat-bg:oklch(0.30 0.05 205);
+  --kid-bg:oklch(0.27 0.05 85); --kid-line:oklch(0.50 0.09 85); --kid-ink:oklch(0.88 0.10 88);
+  --free-bg:oklch(0.28 0.05 160); --free-ink:oklch(0.84 0.09 160);
+  --glass:oklch(0.17 0.025 262 / .8);
+  --sh-2:0 1px 2px oklch(0 0 0 / .3), 0 14px 36px -18px oklch(0 0 0 / .8);
+  color-scheme:dark}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:200px}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 var(--step-0)/1.6 var(--font-text);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--paper)}
+/* page sky: haze → night as you scroll (CSS scroll-driven) */
+.sky{position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(to bottom,var(--paper),var(--paper-2))}
+.sky::after{content:"";position:absolute;inset:0;background:var(--night-tint);opacity:0}
+@supports (animation-timeline: scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .sky::after{animation:nightfall linear both;animation-timeline:scroll(root)}
+    @keyframes nightfall{from{opacity:0}to{opacity:.09}}
+  }
+}
+a{color:inherit;text-decoration-color:color-mix(in oklch,currentColor 40%,transparent);text-underline-offset:.2em;transition:color var(--dur-fast) var(--ease-out),text-decoration-color var(--dur-fast)}
+a:hover{text-decoration-color:currentColor}
+:focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1320px;margin-inline:auto;padding-left:max(var(--s-4),env(safe-area-inset-left,0px));padding-right:max(var(--s-4),env(safe-area-inset-right,0px))}
+@media (min-width:720px){.wrap{padding-left:max(var(--s-6),env(safe-area-inset-left,0px));padding-right:max(var(--s-6),env(safe-area-inset-right,0px))}}
+.skip{position:absolute;left:var(--s-4);top:-100px;z-index:50;background:var(--ink);color:var(--paper);padding:var(--s-2) var(--s-4);border-radius:var(--r-sm)}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + var(--s-2))}
+.label{font:600 var(--step--1)/1.3 var(--font-text);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.serif{font-family:var(--font-display);font-weight:400}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:clamp(540px,80svh,860px);overflow:clip;isolation:isolate;display:grid}
+.hero canvas,.hero .fallback{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-1}
+.hero .fallback svg{width:100%;height:100%;display:block}
+.hero-in{position:relative;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--s-5);align-content:start;padding-block:clamp(48px,10vh,120px) var(--s-8)}
+.hero-copy{grid-column:1 / span 7;display:grid;gap:var(--s-4);align-content:start}
+.hero .eyebrow{font:600 var(--step--1)/1.3 var(--font-text);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.hero h1{font:400 var(--step-4)/.92 var(--font-display);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--haze-deep)}
+.hero .lede{max-width:44ch;margin:0;color:var(--ink-2);font-size:var(--step-1);line-height:1.5}
+.hero-dates{grid-column:8 / -1;grid-row:1;justify-self:end;align-self:start;margin-right:calc(-1 * clamp(24px,6vw,120px));font:italic 400 var(--step-5)/.8 var(--font-display);letter-spacing:-.04em;color:color-mix(in oklch,var(--ink) 88%,transparent);white-space:nowrap;user-select:none;text-align:right}
+.hero-dates small{display:block;font:600 var(--step--1)/1 var(--font-text);font-style:normal;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);margin:var(--s-3) clamp(24px,6vw,120px) 0 0}
+.hero-cta{display:flex;flex-wrap:wrap;gap:var(--s-3);margin-top:var(--s-3)}
+@media (max-width:860px){
+  .hero-copy{grid-column:1 / -1;grid-row:2}
+  .hero-dates{grid-column:1 / -1;grid-row:1;justify-self:start;text-align:left;margin:0 0 var(--s-4);font-size:clamp(4rem,26vw,9rem);max-width:100%}
+  .hero-dates small{margin:var(--s-2) 0 0}
+}
+
+/* ---------- buttons, pills, chips ---------- */
+.btn{display:inline-flex;align-items:center;gap:var(--s-2);font:600 var(--step-0)/1 var(--font-text);padding:.85em 1.25em;border-radius:var(--r-pill);border:1px solid transparent;cursor:pointer;text-decoration:none;transition:transform var(--dur-fast) var(--ease-out),background-color var(--dur-fast),border-color var(--dur-fast),color var(--dur-fast)}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-primary:hover{background:color-mix(in oklch,var(--ink) 85%,var(--ember))}
+.btn-ghost{background:var(--glass);border-color:var(--line);color:var(--ink);backdrop-filter:blur(8px)}
+.btn-ghost:hover{border-color:var(--ink-2)}
+.btn:active,.pill:active,.seg button:active,.save:active{transform:scale(.96)}
+.pill{flex:none;display:inline-flex;align-items:center;gap:var(--s-2);font:500 var(--step--1)/1 var(--font-text);padding:.7em 1.05em;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;white-space:nowrap;transition:background-color var(--dur-fast),border-color var(--dur-fast),color var(--dur-fast),transform var(--dur-fast) var(--ease-out)}
+.pill:hover{border-color:var(--ink-2)}
+.pill[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pill.city[data-v="Knoxville"][aria-pressed="true"]{background:var(--knx-bg);border-color:var(--knx);color:var(--knx)}
+.pill.city[data-v="Pigeon Forge"][aria-pressed="true"]{background:var(--pf-bg);border-color:var(--pf);color:var(--pf)}
+.pill.city[data-v="Gatlinburg"][aria-pressed="true"]{background:var(--gat-bg);border-color:var(--gat);color:var(--gat)}
+.pill.kidp[aria-pressed="true"]{background:var(--kid-bg);border-color:var(--kid-line);color:var(--kid-ink)}
+.pill.planp[aria-pressed="true"]{background:var(--ember);border-color:var(--ember);color:var(--on-ember)}
+.dot{width:.55em;height:.55em;border-radius:50%;display:inline-block}
+.chip{display:inline-flex;align-items:center;font:600 .7rem/1 var(--font-text);letter-spacing:.09em;text-transform:uppercase;padding:.5em .7em;border-radius:var(--r-pill);white-space:nowrap}
+.chip.Knoxville{background:var(--knx-bg);color:var(--knx)}.chip.Pigeon{background:var(--pf-bg);color:var(--pf)}.chip.Gatlinburg{background:var(--gat-bg);color:var(--gat)}
+.chip.k{background:var(--kid-bg);color:var(--kid-ink)}
+.chip.f{background:var(--free-bg);color:var(--free-ink)}
+.chip.t{background:var(--ember);color:var(--on-ember)}
+
+/* ---------- before you go ---------- */
+.brief{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--s-6) var(--s-5);padding-block:var(--s-8) var(--s-6);border-top:1px solid var(--line)}
+.brief > *{min-width:0}
+.brief .weather{grid-column:1 / span 5}
+.brief .traffic{grid-column:7 / -1}
+.brief h2{margin:0 0 var(--s-4)}
+.temps{display:flex;gap:var(--s-6);flex-wrap:wrap;font-variant-numeric:tabular-nums;margin-bottom:var(--s-4)}
+.temps div{display:flex;flex-direction:column;gap:var(--s-1)}
+.temps b{font:400 var(--step-4)/.9 var(--font-display);letter-spacing:-.03em}
+.temps div:last-child b{color:var(--haze-deep);font-style:italic}
+.temps small{font-size:var(--step--1);color:var(--ink-2)}
+.brief p{margin:0;color:var(--ink-2);max-width:60ch}
+.traffic ol{margin:0;padding:0;list-style:none;counter-reset:t;display:grid;gap:var(--s-4)}
+.traffic li{counter-increment:t;display:grid;grid-template-columns:2.2rem 1fr;gap:var(--s-2);color:var(--ink-2);line-height:1.55}
+.traffic li::before{content:counter(t,decimal-leading-zero);font:italic 400 var(--step-1)/1.2 var(--font-display);color:var(--ember-text)}
+@media (max-width:860px){.brief .weather,.brief .traffic{grid-column:1 / -1}}
+
+/* ---------- filter bar ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--glass);backdrop-filter:saturate(1.3) blur(16px);-webkit-backdrop-filter:saturate(1.3) blur(16px);border-block:1px solid var(--line);transition:box-shadow var(--dur-med)}
+.bar:has(input:focus-visible),.bar.stuck{box-shadow:var(--sh-2)}
+.bar .wrap{display:grid;gap:var(--s-3);padding-block:var(--s-3)}
+.row{display:flex;gap:var(--s-2);align-items:center;flex-wrap:wrap}
+.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:calc(-1 * var(--s-2));padding:2px var(--s-2);mask-image:linear-gradient(to right,transparent,#000 var(--s-2),#000 calc(100% - var(--s-6)),transparent)}
+.scroll::-webkit-scrollbar{display:none}
+.search{flex:1 1 260px;min-width:0;position:relative}
+.search input{width:100%;font:400 var(--step-0)/1.2 var(--font-text);padding:.75em 1em .75em 2.6em;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--paper);color:var(--ink);transition:border-color var(--dur-fast)}
+.search input:hover{border-color:var(--ink-2)}
+.search input:focus-visible{outline:none;border-color:var(--ember);box-shadow:0 0 0 3px color-mix(in oklch,var(--ember) 30%,transparent)}
+.search svg{position:absolute;left:1em;top:50%;transform:translateY(-50%);color:var(--ink-2);pointer-events:none}
+.seg{display:inline-flex;flex:none;background:var(--paper-3);border-radius:var(--r-pill);padding:3px}
+.seg button{font:500 var(--step--1)/1 var(--font-text);border:0;background:transparent;color:var(--ink-2);padding:.75em 1.05em;border-radius:var(--r-pill);cursor:pointer;transition:background-color var(--dur-fast),color var(--dur-fast),transform var(--dur-fast) var(--ease-out)}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:var(--sh-1);font-weight:600}
+.status{display:flex;justify-content:space-between;align-items:center;gap:var(--s-3);font-size:var(--step--1);color:var(--ink-2)}
+.opt-group{display:grid;gap:var(--s-3);min-width:0}
+.filt-btn{display:none;flex:none;align-items:center;gap:6px;font:600 var(--step--1)/1 var(--font-text);padding:.75em 1em;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;transition:border-color var(--dur-fast),transform var(--dur-fast) var(--ease-out)}
+.filt-btn:hover{border-color:var(--ink-2)}
+.filt-btn:active{transform:scale(.96)}
+.filt-btn[aria-expanded="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.badge{min-width:1.4em;height:1.4em;padding:0 .35em;border-radius:var(--r-pill);background:var(--ember);color:var(--on-ember);font-size:.72rem;display:inline-grid;place-items:center}
+@media (max-width:720px){
+  .bar .wrap{gap:var(--s-2);padding-block:var(--s-2)}
+  .bar .row:first-child{flex-wrap:nowrap}
+  .search{flex:1 1 auto}
+  .search input{padding:.6em .9em .6em 2.4em;font-size:16px}
+  .filt-btn{display:inline-flex;padding:.6em .9em}
+  .bar:not(.open) .opt,.bar:not(.open) .opt-group{display:none}
+  .bar.open .seg.opt{order:3}
+  .bar .row:first-child{flex-wrap:wrap}
+  .bar .row:first-child .search{flex:1 1 0}
+  .bar.open .seg.opt{flex-basis:100%;justify-content:space-between}
+  .bar.open .seg.opt button{flex:1}
+  .status{font-size:.75rem}
+  .status .linkbtn{padding:var(--s-1) 0}
+  .bar.open .wrap{max-height:calc(70svh - env(safe-area-inset-top,0px));overflow-y:auto}
+}
+.linkbtn{font:500 var(--step--1)/1 var(--font-text);background:none;border:0;color:var(--ink);cursor:pointer;padding:var(--s-2);text-decoration:underline;text-underline-offset:.25em}
+.linkbtn:hover{color:var(--ember-text)}
+.linkbtn[disabled]{color:var(--ink-2);text-decoration:none;cursor:default}
+
+/* ---------- section heads with ridge band ---------- */
+.band{margin-top:var(--s-8)}
+.band-head{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);padding-bottom:var(--s-4);margin-bottom:var(--s-6)}
+.band-head svg.ridgeline{position:absolute;left:0;right:0;bottom:0;width:100%;height:56px;z-index:-1;color:var(--paper-3)}
+.band-head h2{font:400 var(--step-3)/1 var(--font-display);letter-spacing:-.015em;margin:0;text-wrap:balance}
+.band-head .n{font:italic 400 var(--step-2)/1 var(--font-display);color:var(--ink-2)}
+
+/* ---------- Top 5 ---------- */
+.top5 ol{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid var(--line)}
+.pick{display:grid;grid-template-columns:clamp(4.5rem,3rem + 6vw,9rem) minmax(0,1fr) minmax(0,.8fr);column-gap:var(--s-6);align-items:start;padding-block:var(--s-6);border-bottom:1px solid var(--line)}
+.pick .rank{position:relative;left:calc(-1 * clamp(0px,4vw,72px));font:italic 400 clamp(4.5rem,3rem + 6vw,9rem)/.8 var(--font-display);color:var(--ember);text-align:right}
+.pick-copy{display:grid;gap:var(--s-3);align-content:start;min-width:0}
+.pick h3{font:400 var(--step-3)/1.02 var(--font-display);margin:0;letter-spacing:-.015em;text-wrap:balance}
+.pick h3 a{text-decoration:none}
+.pick h3 a:hover{color:var(--ember-text)}
+.pick .when{font:600 var(--step-0)/1.4 var(--font-text);color:var(--ember-text)}
+.pick p{margin:0;color:var(--ink-2);max-width:48ch;padding-top:1.9rem}
+@media (max-width:860px){
+  .pick{grid-template-columns:clamp(3.2rem,14vw,4.5rem) minmax(0,1fr);column-gap:var(--s-4)}
+  .pick .rank{font-size:clamp(3.2rem,14vw,4.5rem);left:0}
+  .pick p{grid-column:2;padding-top:var(--s-3)}
+}
+
+/* ---------- event grid ---------- */
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));column-gap:var(--s-6);row-gap:var(--s-7)}
+.card{display:flex;flex-direction:column;gap:var(--s-3);min-width:0;container-type:inline-size;position:relative}
+.card{border-top:1px solid var(--line);padding-top:var(--s-4);transition:border-color var(--dur-med) var(--ease-out)}
+.card:hover{border-top-color:var(--ink-2)}
+.card:has(.save[aria-pressed="true"]){border-top:2px solid var(--ember);padding-top:calc(var(--s-4) - 1px)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-3)}
+.save{position:relative;flex:none;display:inline-flex;align-items:center;gap:6px;font:600 .75rem/1 var(--font-text);border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:.55em .8em;border-radius:var(--r-pill);cursor:pointer;transition:background-color var(--dur-fast),border-color var(--dur-fast),transform var(--dur-fast) var(--ease-out)}
+.save:hover{border-color:var(--ink-2)}
+.save svg{width:14px;height:14px}
+.save[aria-pressed="true"]{background:var(--ember);border-color:var(--ember);color:var(--on-ember)}
+.save[aria-pressed="true"] svg path{fill:currentColor}
+.save.pop svg{animation:pop var(--dur-slow) var(--ease-out)}
+@keyframes pop{0%{transform:scale(.6) rotate(-30deg)}60%{transform:scale(1.3)}100%{transform:none}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-content:start}
+.card h3{font:400 var(--step-2)/1.08 var(--font-display);letter-spacing:-.01em;margin:0;text-wrap:balance}
+.card h3 a{text-decoration:none}
+.card h3 a::after{content:"";position:absolute;inset:0;z-index:0}
+.card h3 a:hover{color:var(--ember-text)}
+.card .save,.card .chips{z-index:2}
+.meta{display:grid;gap:2px;font-size:var(--step--1);color:var(--ink-2);align-content:start}
+.meta .when{font-weight:600;color:var(--ember-text)}
+.meta .price{color:var(--ink);font-weight:600}
+.desc{margin:0;font-size:var(--step--1);line-height:1.55;color:var(--ink-2);align-self:start}
+@container (min-width:420px){.card h3{font-size:var(--step-3)}}
+.kids-band{margin-top:var(--s-8);background:var(--kid-bg);border-radius:var(--r-lg);padding:var(--s-6) clamp(var(--s-4),3vw,var(--s-6)) var(--s-7)}
+.kids-band .band{margin-top:0}
+.kids-band .band-head svg.ridgeline{color:color-mix(in oklch,var(--kid-line) 45%,var(--kid-bg))}
+.kids-band .band-head h2{color:var(--kid-ink)}
+.empty{margin:var(--s-8) auto;max-width:40ch;text-align:center;color:var(--ink-2);font-size:var(--step-1)}
+.empty b{display:block;font:italic 400 var(--step-3)/1 var(--font-display);color:var(--ink);margin-bottom:var(--s-3)}
+
+/* ---------- footer ---------- */
+.foot{margin-top:var(--s-9);padding-block:var(--s-7) var(--s-8);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--s-5);color:var(--ink-2);font-size:var(--step--1)}
+.foot .brand{grid-column:1 / span 5;font:400 var(--step-3)/1 var(--font-display);color:var(--ink)}
+.foot p{grid-column:7 / -1;margin:0}
+@media (max-width:860px){.foot .brand,.foot p{grid-column:1 / -1}}
+
+/* ---------- style guide ---------- */
+#style-guide{padding-block:var(--s-8)}
+#style-guide h2{font:400 var(--step-4)/1 var(--font-display);margin:0 0 var(--s-6)}
+#style-guide h3{margin:var(--s-7) 0 var(--s-4)}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s-4)}
+.sw{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;font-size:var(--step--1)}
+.sw i{display:block;height:72px}
+.sw div{padding:var(--s-2) var(--s-3)}
+.sw code{display:block;color:var(--ink-2);font-size:.72rem;word-break:break-all}
+.scale{display:grid;gap:var(--s-3)}
+.scale div{display:grid;grid-template-columns:7rem 1fr;align-items:baseline;gap:var(--s-4);border-bottom:1px solid var(--line);padding-bottom:var(--s-2);min-width:0;overflow:hidden}
+.scale code{font-size:.75rem;color:var(--ink-2)}
+.tokens-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s-3);font-size:var(--step--1)}
+.tokens-list div{border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-3)}
+.demo-row{display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center}
+[hidden]{display:none!important}
+
+/* view transitions for filter changes */
+::view-transition-old(root),::view-transition-new(root){animation-duration:var(--dur-med)}
+::view-transition-group(*){animation-duration:var(--dur-med);animation-timing-function:var(--ease-out)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+
+<a class="skip" href="#events">Skip to events</a>
+<div class="sky" aria-hidden="true"></div>
+
+<header class="hero" id="top">
+  <canvas id="fog" aria-hidden="true"></canvas>
+  <div class="fallback" id="fogFallback" aria-hidden="true" hidden></div>
+  <div class="wrap hero-in">
+    <div class="hero-dates" aria-hidden="true"><span id="bigDates">13–15</span><small id="bigMonth">November</small></div>
+    <div class="hero-copy">
+      <div class="eyebrow">Fri Nov 13 – Sun Nov 15, 2026</div>
+      <h1>This weekend in <em>the Smokies</em></h1>
+      <p class="lede">What's on in Knoxville, Pigeon Forge and Gatlinburg, from mountaintop light shows to Sunday matinees. Filter by town and day, then save your plan.</p>
+      <div class="hero-cta"><a class="btn btn-primary" href="#events">Browse events</a><a class="btn btn-ghost" href="#top-picks">See top 5 picks</a></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <section class="brief" aria-labelledby="brief-h">
+    <h2 id="brief-h" class="vh">Before you go</h2>
+    <div class="weather">
+      <div class="label">Weekend weather</div>
+      <div class="temps"><div><b>49°</b><small>Sat high · sunny</small></div><div><b>53°</b><small>Sun high · sunny</small></div><div><b>29°</b><small>night lows · frost</small></div></div>
+      <p id="wx"></p>
+    </div>
+    <div class="traffic">
+      <div class="label" style="margin-bottom:var(--s-4)">Traffic &amp; crowds</div>
+      <ol id="trl"></ol>
+    </div>
+  </section>
+</div>
+
+<div class="bar" id="bar" role="search" aria-label="Filter events">
+  <div class="wrap">
+    <div class="row">
+      <label class="search"><span class="vh">Search events</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search events, venues, towns" autocomplete="off"></label>
+      <button type="button" class="filt-btn" id="filtBtn" aria-expanded="false" aria-controls="filtPanel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters<span class="badge" id="fcount" hidden></span></button>
+      <div class="seg opt" id="days" role="group" aria-label="Day">
+        <button type="button" data-v="all" aria-pressed="true">All days</button><button type="button" data-v="Fri" aria-pressed="false">Fri</button><button type="button" data-v="Sat" aria-pressed="false">Sat</button><button type="button" data-v="Sun" aria-pressed="false">Sun</button>
+      </div>
+    </div>
+    <div class="opt-group" id="filtPanel">
+    <div class="row scroll" role="group" aria-label="Town and options">
+      <button type="button" class="pill city" data-v="Knoxville" aria-pressed="false"><span class="dot" style="background:var(--knx)"></span>Knoxville</button>
+      <button type="button" class="pill city" data-v="Pigeon Forge" aria-pressed="false"><span class="dot" style="background:var(--pf)"></span>Pigeon Forge</button>
+      <button type="button" class="pill city" data-v="Gatlinburg" aria-pressed="false"><span class="dot" style="background:var(--gat)"></span>Gatlinburg</button>
+      <button type="button" class="pill kidp" id="kidT" aria-pressed="false">Kid-friendly</button>
+      <button type="button" class="pill" id="freeT" aria-pressed="false">Free</button>
+      <button type="button" class="pill" id="topT" aria-pressed="false">Top picks</button>
+      <button type="button" class="pill planp" id="planT" aria-pressed="false">★ My plan <span id="pc"></span></button>
+    </div>
+    <div class="row scroll" id="cats" role="group" aria-label="Category"></div>
+    </div>
+    <div class="status"><span id="count" aria-live="polite"></span><button type="button" class="linkbtn" id="reset" disabled>Clear filters</button></div>
+  </div>
+</div>
+
+<div class="wrap" id="events" tabindex="-1">
+  <section class="band top5" id="top-picks" aria-labelledby="top-h">
+    <div class="band-head"><h2 id="top-h">Top 5 this weekend</h2><span class="n">ranked</span></div>
+    <ol id="rail"></ol>
+  </section>
+  <div id="out"></div>
+</div>
+
+<section id="style-guide" class="wrap" hidden aria-labelledby="sg-h"></section>
+</main>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="brand">Smokies Weekend Planner</div>
+    <p>Times and prices come from organizer and listing pages as of Fri Nov 13, 2026, and can change. Check with the venue before you go. Saved events stay in this browser only. <a href="#style-guide">Style guide</a></p>
+  </div>
+</footer>
+
+<script>
+const DATA = {"events": [{"n": "Journey to the North Pole (opening weekend)", "c": "Gatlinburg", "t": "Opens Fri; runs daily through Jan 3", "v": "Anakeesta", "p": "Anakeesta admission", "d": "New Christmas makeover: the gondola becomes the North Pole Express, plus Santa's Flight light show on the Treetop Skywalk.", "u": "https://www.pigeonforge.com/event/anakeesta-christmas/", "cat": "Festivals & Seasonal", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": false, "top": true, "rank": 1}, {"n": "Dollywood's Smoky Mountain Christmas", "c": "Pigeon Forge", "t": "Fri–Sun, park hours vary (check dollywood.com)", "v": "Dollywood", "p": "Park admission", "d": "6 million lights, nightly Snow in the Grove, and Christmas shows including the new Heidi Parton's A Christmas To Remember.", "u": "https://www.laughingplace.com/parks/dollywood-smoky-mountain-christmas-2026/", "cat": "Festivals & Seasonal", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": false, "top": true, "rank": 2}, {"n": "Winterfest Christmas Village", "c": "Pigeon Forge", "t": "Fri–Sun, 11 am–8 pm", "v": "Patriot Park", "p": "Free entry", "d": "Open-air holiday market with craft vendors to start the Winterfest season.", "u": "https://www.pigeonforge.com/event/patriot-park-christmas-village/", "cat": "Festivals & Seasonal", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": true, "top": false}, {"n": "Autumn's GLOW (final weekend)", "c": "Pigeon Forge", "t": "Nightly at sunset, through Sun", "v": "The Island", "p": "Free admission & parking", "d": "Last chance for the fall fountain show and harvest light shows on the Great Smoky Mountain Wheel.", "u": "https://www.mypigeonforge.com/event/autumn-in-the-smokies-at-the-island/", "cat": "Festivals & Seasonal", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": true, "top": false}, {"n": "Winterfest Lights & Driving Tour", "c": "Pigeon Forge", "t": "Nightly, all weekend", "v": "Pigeon Forge Parkway & area", "p": "Free", "d": "Millions of holiday lights along the Parkway and around town.", "u": "https://www.pigeonforge.com/event/winterfest-lights/", "cat": "Festivals & Seasonal", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": true, "top": false}, {"n": "Gatlinburg Winter Magic", "c": "Gatlinburg", "t": "Nightly, all weekend", "v": "Downtown Gatlinburg", "p": "Free", "d": "Gatlinburg's holiday light displays along the Parkway, running into February.", "u": "https://pigeonforgewinterfest.com/events/", "cat": "Festivals & Seasonal", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": true, "top": false}, {"n": "Christmastime at The Old Mill", "c": "Pigeon Forge", "t": "Daily, all weekend", "v": "The Old Mill", "p": "Free to browse", "d": "Holiday décor and seasonal shopping at the historic mill district.", "u": "https://www.mypigeonforge.com/event/an-old-mill-christmas/", "cat": "Festivals & Seasonal", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": true, "top": false}, {"n": "SkyLand's Festival of Lights", "c": "Pigeon Forge", "t": "Select nights from Fri", "v": "SkyLand Ranch", "p": "Varies", "d": "New-season holiday light festival on the mountaintop ranch (check select dates).", "u": "https://www.pigeonforge.com/event/skyland-festival-of-lights/", "cat": "Festivals & Seasonal", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Aaron Lewis", "c": "Knoxville", "t": "Sat, 7 pm", "v": "Knoxville Civic Auditorium", "p": "From ~$44", "d": "The Staind frontman's country tour comes to the Civic.", "u": "https://seatgeek.com/cities/knoxville/this-weekend", "cat": "Live Music & Concerts", "kid": false, "days": ["Sat"], "free": false, "top": false}, {"n": "Jackson Dean (18+)", "c": "Knoxville", "t": "Fri, 8 pm (tonight)", "v": "The Mill & Mine", "p": "From ~$82 resale", "d": "Country-rock singer behind \"Don't Come Lookin'\".", "u": "https://seatgeek.com/cities/knoxville/this-weekend", "cat": "Live Music & Concerts", "kid": false, "days": ["Fri"], "free": false, "top": false}, {"n": "Knoxville Jazz Orchestra", "c": "Knoxville", "t": "Fri (tonight)", "v": "Bijou Theatre", "p": "Varies", "d": "Big-band jazz in Knoxville's oldest theater.", "u": "https://www.songkick.com/venues/1156-bijou-theatre", "cat": "Live Music & Concerts", "kid": false, "days": ["Fri"], "free": false, "top": false}, {"n": "The Carpenters Legacy", "c": "Knoxville", "t": "Sun, 3 pm", "v": "Bijou Theatre", "p": "Varies", "d": "Matinee tribute to Karen and Richard Carpenter's hits.", "u": "https://allevents.in/knoxville/carpenters-legacy/200030926565218", "cat": "Live Music & Concerts", "kid": true, "days": ["Sun"], "free": false, "top": false}, {"n": "A Love Letter to Dolly Parton", "c": "Knoxville", "t": "Sun, 5–6:30 pm", "v": "Tennessee Valley Unitarian Universalist Church", "p": "Tickets via ChristopherHamblin.com", "d": "Dolly tribute concert benefiting the Imagination Library.", "u": "https://allevents.in/knoxville/a-love-letter-to-dolly-parton/200030902930052", "cat": "Live Music & Concerts", "kid": false, "days": ["Sun"], "free": false, "top": false}, {"n": "Live country at Ole Red", "c": "Gatlinburg", "t": "Fri–Sun; Sun acoustic show 3–6 pm", "v": "Ole Red Gatlinburg", "p": "Varies", "d": "Zech Dallas Band (Fri–Sat), Jeff Bowen, Denver Evans, Jason Passmore, From The Edge and more.", "u": "https://venunite.com/tn/cities/gatlinburg-tn/events/2026-11", "cat": "Live Music & Concerts", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Film Fest Knox (final days)", "c": "Knoxville", "t": "Through Sun", "v": "Regal Riviera, downtown", "p": "$100 pass; $275 VIP", "d": "Screenings, regional filmmaker competitions and workshops; Tim Blake Nelson receives the James Agee Award.", "u": "https://www.visitknoxville.com/articles/post/film-fest-knox-to-honor-tim-blake-nelson-passes-on-sale/", "cat": "Theater, Comedy & Shows", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": true, "rank": 3}, {"n": "Clyde's (closing weekend)", "c": "Knoxville", "t": "Sat 7:30 pm; Sun 2 pm", "v": "Clarence Brown Theatre – Jenny Boyd Theatre", "p": "Varies", "d": "Lynn Nottage's Tony-nominated comedy set in a truck-stop sandwich shop.", "u": "https://clarencebrowntheatre.com/shows/clydes/", "cat": "Theater, Comedy & Shows", "kid": false, "days": ["Sat", "Sun"], "free": false, "top": false}, {"n": "Dolly Parton's Stampede Christmas", "c": "Pigeon Forge", "t": "Nightly shows", "v": "Dolly Parton's Stampede", "p": "Varies", "d": "Holiday horse show with a four-course dinner.", "u": "https://www.mypigeonforge.com/event/dollys-stampede-christmas/", "cat": "Theater, Comedy & Shows", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Paula Deen's Lumberjack Feud Christmas (opening)", "c": "Pigeon Forge", "t": "From Fri", "v": "Paula Deen's Lumberjack Feud", "p": "Varies", "d": "The lumberjack dinner show's holiday edition debuts this weekend.", "u": "https://www.pigeonforge.com/event/lumberjack-feud-christmas-show/", "cat": "Theater, Comedy & Shows", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Hatfield & McCoy Christmas Disaster", "c": "Pigeon Forge", "t": "Nightly shows", "v": "Hatfield & McCoy Dinner Feud", "p": "Varies", "d": "Comedy dinner show with an all-you-can-eat holiday meal.", "u": "https://www.pigeonforge.com/event/hatfield-mccoy-christmas-disaster/", "cat": "Theater, Comedy & Shows", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Country Tonite Christmas", "c": "Pigeon Forge", "t": "Show schedule varies", "v": "Country Tonite Theatre", "p": "Varies", "d": "Country music and dance revue in holiday dress.", "u": "https://www.mypigeonforge.com/event/christmas-show-country-tonite/", "cat": "Theater, Comedy & Shows", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Vols Football at Texas A&M", "c": "Knoxville", "t": "Sat (away; check TV listings)", "v": "Kyle Field, College Station", "p": "TV / watch parties", "d": "No home game this week; catch it at a Knoxville bar or at home.", "u": "https://en.wikipedia.org/wiki/2026_Tennessee_Volunteers_football_team", "cat": "Sports", "kid": false, "days": ["Sat"], "free": false, "top": false}, {"n": "Vols Basketball vs. Tennessee State", "c": "Knoxville", "t": "Fri, 7 pm (tonight)", "v": "Food City Center", "p": "From ~$7", "d": "Men's hoops early-season home game.", "u": "https://seatgeek.com/cities/knoxville/this-weekend", "cat": "Sports", "kid": false, "days": ["Fri"], "free": false, "top": false}, {"n": "Ice Bears vs. Huntsville Havoc", "c": "Knoxville", "t": "Fri, 7:30 pm (tonight)", "v": "Knoxville Civic Coliseum", "p": "From ~$30", "d": "SPHL hockey rivalry night.", "u": "https://seatgeek.com/cities/knoxville/this-weekend", "cat": "Sports", "kid": true, "days": ["Fri"], "free": false, "top": false}, {"n": "Knoxville Challenger (finals)", "c": "Knoxville", "t": "Through Sun", "v": "Goodfriend Tennis Center", "p": "Varies", "d": "ATP Challenger pro tennis tournament wraps up this weekend.", "u": "https://www.vipknoxville.com/calendar?d=9&y=2026&m=11&cid=8454", "cat": "Sports", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Tennessee Brawl Wrestling", "c": "Gatlinburg", "t": "Sat & Sun from 9 am", "v": "Rocky Top Sports World", "p": "Varies", "d": "Youth wrestling tournament (individual Sat, duals Sun).", "u": "https://allevents.in/gatlinburg/tennessee-brawl-presented-by-valhalla-wrestling/200029798822205", "cat": "Sports", "kid": false, "days": ["Sat", "Sun"], "free": false, "top": false}, {"n": "Knoxville Haiti Fest", "c": "Knoxville", "t": "Sun, 4–7 pm", "v": "Immaculate Conception Parish Hall, 414 W Vine Ave", "p": "Varies", "d": "Haitian food, konpa and merengue dancing, and family fun.", "u": "https://allevents.in/knoxville/knoxville-haiti-fest-2026/200030980519843", "cat": "Food & Drink", "kid": true, "days": ["Sun"], "free": false, "top": false}, {"n": "Market Square Farmers Market (winter)", "c": "Knoxville", "t": "Sat, 9 am–1 pm", "v": "Market Square", "p": "Free entry", "d": "Winter edition of downtown's producer-only market.", "u": "https://www.downtownknoxville.org/featured/farmersmarket", "cat": "Food & Drink", "kid": false, "days": ["Sat"], "free": true, "top": false}, {"n": "Dollywood Festival Tasting Pass", "c": "Pigeon Forge", "t": "During park hours", "v": "Dollywood", "p": "$45.99 + tax", "d": "Sample a run of seasonal Christmas festival dishes around the park.", "u": "https://www.laughingplace.com/parks/dollywood-smoky-mountain-christmas-2026/", "cat": "Food & Drink", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Christmas Marketplace at Historic Ramsey House", "c": "Knoxville", "t": "Sat, 10 am–3 pm", "v": "2614 Thorn Grove Pike", "p": "Free; free parking", "d": "Regional artisans, live music, lunch, and visits with Santa & Mrs. Claus.", "u": "https://allevents.in/knoxville/christmas-marketplace-at-historic-ramsey-house/200030669918351", "cat": "Arts, Markets & Crafts", "kid": true, "days": ["Sat"], "free": true, "top": true, "rank": 5}, {"n": "Knoxville Smokies Garage Sale", "c": "Knoxville", "t": "Sat 10 am–3 pm; Sun 12–4 pm", "v": "Covenant Health Park", "p": "Free entry", "d": "Deals on Smokies baseball merch; Fill-A-Bag returns (limited).", "u": "https://allevents.in/knoxville/smokies-garage-sale/200030992705428", "cat": "Arts, Markets & Crafts", "kid": false, "days": ["Sat", "Sun"], "free": true, "top": false}, {"n": "Winter Meowket", "c": "Knoxville", "t": "Sun, 2–6 pm", "v": "1015 N Broadway", "p": "Free entry", "d": "Holiday shopping pop-up that raises money for cats.", "u": "https://allevents.in/knoxville/winter-meowket-shopping-saves-cats/200030962955146", "cat": "Arts, Markets & Crafts", "kid": false, "days": ["Sun"], "free": true, "top": false}, {"n": "Stocking Stuffer Expo", "c": "Gatlinburg", "t": "Fri–Sun (ends Sun 3 pm)", "v": "234 Airport Rd", "p": "Varies", "d": "Holiday vendor expo for early gift shopping.", "u": "https://allevents.in/gatlinburg/stocking-stuffer-expo-2026/200030640616540", "cat": "Arts, Markets & Crafts", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "Christmas Place 40th Celebration", "c": "Pigeon Forge", "t": "Daily", "v": "The Incredible Christmas Place", "p": "Free ornament giveaway", "d": "Pigeon Forge's giant Christmas store marks 40 years.", "u": "https://www.mypigeonforge.com/event/christmas-place-40-year-celebration-free-ornament-giveaway/", "cat": "Arts, Markets & Crafts", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": true, "top": false}, {"n": "Smokies scenic drives (Roaring Fork, Cades Cove)", "c": "Gatlinburg", "t": "Daily; Roaring Fork open until Nov 29", "v": "Great Smoky Mountains NP", "p": "Free; $ parking tag to park 15+ min", "d": "Sunny skies make it a good weekend for late-fall drives. Ranger programs are done for the season.", "u": "https://npshistory.com/publications/grsm/newspaper/fall-2026.pdf", "cat": "Outdoors & Nature", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": true, "top": false}, {"n": "Winterfest Night Flight", "c": "Pigeon Forge", "t": "Evenings from Fri", "v": "Scenic Helicopter Tours", "p": "Varies", "d": "Helicopter tour over the Winterfest lights.", "u": "https://www.pigeonforge.com/event/winterfest-night-flight/", "cat": "Outdoors & Nature", "kid": false, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}, {"n": "November Walk & Talk with JLK", "c": "Knoxville", "t": "Sat, 11 am–2 pm", "v": "Ijams Nature Center", "p": "Free walk; lunch on your own", "d": "Easy trail walk then lunch at SoKno Taco, hosted by the Junior League; all women welcome.", "u": "https://allevents.in/knoxville/november-walk-and-talk-with-jlk/200030966723856", "cat": "Outdoors & Nature", "kid": false, "days": ["Sat"], "free": true, "top": false}, {"n": "Knoxferno Fire Jam", "c": "Knoxville", "t": "Sat, 7 pm–midnight", "v": "The Pink Cactus", "p": "Varies", "d": "Fire-spinning performers and music.", "u": "https://allevents.in/knoxville/knoxferno-fire-jam-the-pink-cactus/200030980525206", "cat": "Nightlife", "kid": false, "days": ["Sat"], "free": false, "top": false}, {"n": "Rockin' Fountain City Social", "c": "Knoxville", "t": "Sat, 8 pm", "v": "Fountain City Social retro cocktail bar", "p": "Varies", "d": "Live rock night at the retro cocktail lounge.", "u": "https://allevents.in/knoxville/rockin-fountain-city-social/200031017541425", "cat": "Nightlife", "kid": false, "days": ["Sat"], "free": false, "top": false}, {"n": "Bachata Brunch: Latin Dance Party", "c": "Knoxville", "t": "Sun, 12–4 pm", "v": "Laurel Theater", "p": "Varies", "d": "Daytime bachata social dancing.", "u": "https://allevents.in/knoxville/bachata-brunch-latin-dance-party-november-edition/200031031930728", "cat": "Nightlife", "kid": false, "days": ["Sun"], "free": false, "top": false}, {"n": "Smoky Night Lights", "c": "Knoxville", "t": "Fri–Sun, 6–9 pm", "v": "Zoo Knoxville", "p": "$15.95–$22.95 (members $11.95+)", "d": "Immersive 360° light-and-music show about the Smokies. Limited capacity, so book ahead.", "u": "https://www.zooknoxville.org/events/smoky-night-lights/", "cat": "Family & Kids", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": false, "top": true, "rank": 4}, {"n": "Kidstuff Live with Sarah Pirkle", "c": "Knoxville", "t": "Sat, 10 am", "v": "Visit Knoxville, 301 S Gay St", "p": "Free", "d": "WDVX's family music and dance morning for kids of all ages.", "u": "https://allevents.in/knoxville/kidstuff-live-11-14-sarah-pirkle/200030989858112", "cat": "Family & Kids", "kid": true, "days": ["Sat"], "free": true, "top": false}, {"n": "Sensory-Friendly Morning", "c": "Gatlinburg", "t": "Sat, 9–10:30 am", "v": "Ripley's Aquarium of the Smokies", "p": "$3 off admission", "d": "Softer lighting, no music and a quiet room, with all exhibits open.", "u": "https://www.pigeonforge.com/event/sensory-friendly-ripleys/", "cat": "Family & Kids", "kid": true, "days": ["Sat"], "free": false, "top": false}, {"n": "A Sea of Trees (opening)", "c": "Gatlinburg", "t": "Starts Sat", "v": "Ripley's Aquarium of the Smokies", "p": "Included with admission", "d": "The aquarium fills with decorated Christmas trees through Jan 4.", "u": "https://allevents.in/gatlinburg/a-sea-of-trees/200030970593323", "cat": "Family & Kids", "kid": true, "days": ["Sat", "Sun"], "free": false, "top": false}, {"n": "Tomorrow's Engineers Today", "c": "Knoxville", "t": "Sat, 10 am–4 pm", "v": "UT Zeanah Engineering Complex", "p": "$0–$11", "d": "Hands-on \"engineer for a day\" program on campus.", "u": "https://allevents.in/knoxville/tomorrows-engineers-today-fall-2026/100001995402137508", "cat": "Family & Kids", "kid": true, "days": ["Sat"], "free": false, "top": false}, {"n": "Snow in the Grove", "c": "Pigeon Forge", "t": "Nightly", "v": "Dollywood – Wildwood Grove", "p": "Park admission", "d": "Evening snowfall and tree lighting with Roly, Poly and Benjamin Bear.", "u": "https://www.laughingplace.com/parks/dollywood-smoky-mountain-christmas-2026/", "cat": "Family & Kids", "kid": true, "days": ["Fri", "Sat", "Sun"], "free": false, "top": false}], "weather": "Dry and sunny all weekend. Sat high near 49°F, Sun near 53°F, with lows around 29–32°F each night. Expect frost, and colder air at higher elevations (Anakeesta, Ober, the park), so pack layers.", "weather_src": "https://forecast.weather.gov/MapClick.php?lat=35.97&lon=-83.95", "traffic": ["No Vols home game: UT plays at Texas A&M on Saturday, so Neyland game-day traffic won't be an issue.", "Downtown Knoxville will be busy with the final days of Film Fest Knox and Aaron Lewis at the Civic Saturday night. Parking around Gay Street and the Coliseum will fill up.", "Winterfest has started: Pigeon Forge Parkway and Gatlinburg will be slow on Saturday evening with the lights, Dollywood Christmas, and Anakeesta's opening weekend. Use the back roads or the trolley.", "Heading into the Smokies? You need a parking tag to park for more than 15 minutes. Roaring Fork closes Nov 29."]};
+const PLAN_KEY = "smokies-plan-2026-11-13";
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+const isDark = () => { const t = document.documentElement.dataset.theme; return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+
+/* ---------- dates from PLAN_KEY ---------- */
+const FRI = new Date(PLAN_KEY.slice(-10) + "T12:00:00");
+const addDays = n => { const d = new Date(FRI); d.setDate(d.getDate() + n); return d; };
+const SUN = addDays(2);
+$("#bigDates").textContent = FRI.getDate() + "–" + SUN.getDate();
+$("#bigMonth").textContent = FRI.toLocaleString("en-US", {month:"long"}) + (SUN.getMonth() !== FRI.getMonth() ? " – " + SUN.toLocaleString("en-US", {month:"long"}) : "") + " " + SUN.getFullYear();
+const iso = d => d.toISOString().slice(0,10);
+
+/* ---------- helpers ---------- */
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let a=seed||1;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function ridge(r,y0,amp,step,w,h){let d="M0 "+h+" L0 "+y0.toFixed(1);let x=0,y=y0;while(x<w){x+=step*(0.6+r()*0.8);y=y0+(r()-0.5)*amp*2;d+=" L"+x.toFixed(1)+" "+y.toFixed(1)}return d+" L"+w+" "+h+" Z"}
+
+/* ---------- WebGL fog hero (single shader moment) ---------- */
+(function fogHero(){
+  const canvas = $("#fog"), fb = $("#fogFallback");
+  const PALS = {
+    light:{top:[.62,.71,.84], bot:[.96,.86,.79], far:[.62,.69,.80], near:[.17,.23,.33], glow:[.95,.62,.38], fog:[.93,.95,.98]},
+    dark:{top:[.04,.06,.12], bot:[.17,.19,.30], far:[.20,.25,.36], near:[.05,.07,.13], glow:[.95,.60,.36], fog:[.42,.48,.60]}
+  };
+  function fallback(){
+    canvas.hidden = true; fb.hidden = false;
+    const P = isDark() ? PALS.dark : PALS.light, c = a => "rgb(" + a.map(v => Math.round(v*255)).join(" ") + ")";
+    const W = 1600, H = 900, r = rng(11); let s = '<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs><linearGradient id="fs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c(P.top) + '"/><stop offset="1" stop-color="' + c(P.bot) + '"/></linearGradient></defs><rect width="1600" height="900" fill="url(#fs)"/>';
+    for (let i = 0; i < 5; i++){ const k = i/4, col = P.far.map((v,j) => v + (P.near[j]-v)*k); s += '<path d="' + ridge(r, H*(.56+i*.075), H*.05, W/(9+i*2), W, H) + '" fill="' + c(col) + '"/>'; }
+    fb.innerHTML = s + "</svg>";
+  }
+  const gl = canvas.getContext("webgl", {antialias:false, premultipliedAlpha:false, powerPreference:"low-power"});
+  if (!gl) return fallback();
+  const vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+  const fs = `precision mediump float;
+uniform vec2 R;uniform float T;uniform float N;uniform vec2 M;
+uniform vec3 cTop,cBot,cFar,cNear,cGlow,cFog,nTop,nBot,nFar,nNear,nFog;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p*=2.03;a*=.5;}return v;}
+void main(){
+  vec2 uv=gl_FragCoord.xy/R;float asp=R.x/R.y;
+  vec3 top=mix(cTop,nTop,N),bot=mix(cBot,nBot,N),far=mix(cFar,nFar,N),near=mix(cNear,nNear,N),fogc=mix(cFog,nFog,N);
+  vec3 col=mix(bot,top,smoothstep(.0,1.,uv.y));
+  vec2 g=vec2(.72+M.x*.04,.42+M.y*.03);float d=length((uv-g)*vec2(asp,1.));
+  col+=cGlow*exp(-d*3.2)*(.55-.4*N);
+  float st=step(.996,h(floor(gl_FragCoord.xy/2.)))*smoothstep(.45,1.,uv.y)*N;col+=st*.8;
+  for(int i=0;i<5;i++){
+    float k=float(i)/4.;
+    float x=uv.x*asp*(1.2+k*1.6)+float(i)*17.3+M.x*(.02+k*.05);
+    float hgt=.44-(asp<1.?.17:0.)-k*.075+(fbm(vec2(x,float(i)*3.1))-.5)*(.30-k*.08)+M.y*(.005+k*.012);
+    float edge=smoothstep(hgt+.002,hgt-.002,uv.y);
+    vec3 rc=mix(far,near,k);
+    col=mix(col,rc,edge);
+    float mist=fbm(vec2(uv.x*3.-T*.018*(1.+k),uv.y*9.+float(i)*4.));
+    float band=smoothstep(hgt-.16,hgt-.01,uv.y)*edge;
+    col=mix(col,fogc,band*mist*(.55-k*.08));
+  }
+  float sheet=fbm(vec2(uv.x*2.2+T*.012,uv.y*5.-T*.004));
+  col=mix(col,fogc,smoothstep(.5,.95,sheet)*(.28-.12*N)*(1.-uv.y*.5));
+  gl_FragColor=vec4(col,1.);
+}`;
+  const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };
+  const v = sh(gl.VERTEX_SHADER, vs), f = sh(gl.FRAGMENT_SHADER, fs);
+  if (!v || !f) return fallback();
+  const pr = gl.createProgram(); gl.attachShader(pr, v); gl.attachShader(pr, f); gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return fallback();
+  gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = n => gl.getUniformLocation(pr, n);
+  const setPal = () => { const L = PALS.light, D = PALS.dark, base = isDark() ? D : L;
+    gl.uniform3fv(U("cTop"), base.top); gl.uniform3fv(U("cBot"), base.bot); gl.uniform3fv(U("cFar"), base.far); gl.uniform3fv(U("cNear"), base.near); gl.uniform3fv(U("cGlow"), base.glow); gl.uniform3fv(U("cFog"), base.fog);
+    gl.uniform3fv(U("nTop"), D.top); gl.uniform3fv(U("nBot"), D.bot); gl.uniform3fv(U("nFar"), D.far); gl.uniform3fv(U("nNear"), D.near); gl.uniform3fv(U("nFog"), D.fog); };
+  setPal();
+  let mx = 0, my = 0, tx = 0, ty = 0, visible = true, raf = 0, t0 = performance.now();
+  function size(){ const dpr = Math.min(devicePixelRatio || 1, 1.5), w = canvas.clientWidth, hh = canvas.clientHeight; canvas.width = Math.round(w*dpr*.75); canvas.height = Math.round(hh*dpr*.75); gl.viewport(0, 0, canvas.width, canvas.height); }
+  function frame(now){
+    mx += (tx - mx) * .05; my += (ty - my) * .05;
+    const prog = Math.min(1, scrollY / Math.max(1, canvas.clientHeight));
+    const night = isDark() ? 0 : Math.min(.85, prog * .9);
+    gl.uniform2f(U("R"), canvas.width, canvas.height); gl.uniform1f(U("T"), reduce.matches ? 40 : (now - t0) / 1000); gl.uniform1f(U("N"), night); gl.uniform2f(U("M"), mx, my);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    raf = (visible && !reduce.matches && !document.hidden) ? requestAnimationFrame(frame) : 0;
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+  size(); frame(performance.now());
+  addEventListener("resize", () => { size(); kick(); }, {passive:true});
+  addEventListener("scroll", () => { if (visible) kick(); }, {passive:true});
+  addEventListener("pointermove", e => { tx = e.clientX / innerWidth - .5; ty = .5 - e.clientY / innerHeight; if (visible) kick(); }, {passive:true});
+  document.addEventListener("visibilitychange", kick);
+  reduce.addEventListener("change", kick);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { setPal(); kick(); });
+  new MutationObserver(() => { setPal(); kick(); }).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) kick(); }).observe(canvas);
+})();
+
+/* ---------- state ---------- */
+const st = {q:"", day:"all", cities:new Set(), cat:"all", kid:false, free:false, top:false, plan:false};
+let saved = new Set();
+try { saved = new Set(JSON.parse(localStorage.getItem(PLAN_KEY) || "[]")); } catch(e) {}
+const persist = () => { try { localStorage.setItem(PLAN_KEY, JSON.stringify([...saved])); } catch(e) {} };
+const ORDER = [...new Set(DATA.events.map(e => e.cat))];
+const vtName = e => "ev" + hash(e.n).toString(36);
+
+$("#wx").innerHTML = esc(DATA.weather) + ' <a href="' + esc(DATA.weather_src) + '" target="_blank" rel="noopener">NWS forecast</a>';
+$("#trl").innerHTML = DATA.traffic.map(t => "<li>" + esc(t) + "</li>").join("");
+$("#cats").innerHTML = ['<button type="button" class="pill" data-v="all" aria-pressed="true">All categories</button>'].concat(ORDER.map(c => '<button type="button" class="pill" data-v="' + esc(c) + '" aria-pressed="false">' + esc(c) + "</button>")).join("");
+
+/* structured data */
+(function(){
+  const dayIdx = {Fri:0, Sat:1, Sun:2};
+  const ld = {"@context":"https://schema.org","@type":"ItemList","name":"Smokies weekend events","itemListElement":DATA.events.map((e,i) => ({"@type":"ListItem","position":i+1,"item":{"@type":"Event","name":e.n,"description":e.d,"startDate":iso(addDays(dayIdx[e.days[0]] || 0)),"endDate":iso(addDays(dayIdx[e.days[e.days.length-1]] || 2)),"eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","url":e.u,"location":{"@type":"Place","name":e.v,"address":{"@type":"PostalAddress","addressLocality":e.c,"addressRegion":"TN","addressCountry":"US"}},"isAccessibleForFree":!!e.free}}))};
+  const s = document.createElement("script"); s.type = "application/ld+json"; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+})();
+
+/* ---------- render ---------- */
+const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+const cityChip = e => '<span class="chip ' + e.c.split(" ")[0] + '">' + esc(e.c) + "</span>";
+const ridgeSvg = seed => '<svg class="ridgeline" viewBox="0 0 1200 56" preserveAspectRatio="none" aria-hidden="true"><path d="' + ridge(rng(seed), 30, 14, 70, 1200, 56) + '" fill="currentColor"/></svg>';
+function card(e){
+  const s = saved.has(e.n);
+  return '<li class="card" style="view-transition-name:' + vtName(e) + '"><div class="card-top"><div class="chips">' + cityChip(e) + (e.top ? '<span class="chip t">Top pick</span>' : "") + (e.kid ? '<span class="chip k">Kid-friendly</span>' : "") + (e.free ? '<span class="chip f">Free</span>' : "") + '</div>' +
+    '<button type="button" class="save" data-id="' + esc(e.n) + '" aria-pressed="' + s + '" aria-label="' + (s ? "Remove " : "Save ") + esc(e.n) + (s ? " from" : " to") + ' my plan">' + STAR + (s ? "Saved" : "Save") + "</button></div>" +
+    '<h3><a href="' + esc(e.u) + '" target="_blank" rel="noopener">' + esc(e.n) + '</a></h3>' +
+    '<div class="meta"><span class="when">' + esc(e.t) + '</span><span>' + esc(e.v) + ' · <span class="price">' + esc(e.p) + "</span></span></div>" +
+    '<p class="desc">' + esc(e.d) + "</p></li>";
+}
+function renderTop(){
+  const tops = DATA.events.filter(e => e.top).sort((a,b) => (a.rank || 9) - (b.rank || 9));
+  $("#rail").innerHTML = tops.map((e,i) => '<li class="pick"><span class="rank" aria-hidden="true">' + (i+1) + '</span><div class="pick-copy"><div class="chips">' + cityChip(e) + (e.kid ? '<span class="chip k">Kid-friendly</span>' : "") + (e.free ? '<span class="chip f">Free</span>' : "") + '</div><h3><a href="' + esc(e.u) + '" target="_blank" rel="noopener"><span class="vh">Number ' + (i+1) + ": </span>" + esc(e.n) + '</a></h3><div class="when">' + esc(e.t) + " · " + esc(e.v) + '</div></div><p>' + esc(e.d) + "</p></li>").join("");
+}
+function match(e){
+  if (st.day !== "all" && !e.days.includes(st.day)) return false;
+  if (st.cities.size && !st.cities.has(e.c)) return false;
+  if (st.cat !== "all" && e.cat !== st.cat) return false;
+  if (st.kid && !e.kid) return false;
+  if (st.free && !e.free) return false;
+  if (st.top && !e.top) return false;
+  if (st.plan && !saved.has(e.n)) return false;
+  if (st.q) { const hay = (e.n + " " + e.v + " " + e.d + " " + e.c + " " + e.cat).toLowerCase(); if (!st.q.split(/\s+/).every(w => hay.includes(w))) return false; }
+  return true;
+}
+const filtered = () => !!(st.q || st.day !== "all" || st.cities.size || st.cat !== "all" || st.kid || st.free || st.top || st.plan);
+function render(){
+  const list = DATA.events.filter(match);
+  $("#top-picks").hidden = filtered();
+  $("#reset").disabled = !filtered();
+  const nf = (st.day !== "all") + st.cities.size + (st.cat !== "all") + st.kid + st.free + st.top + st.plan;
+  $("#fcount").hidden = !nf; $("#fcount").textContent = nf;
+  $("#count").textContent = list.length + (list.length === 1 ? " event" : " events") + (st.plan ? " in your plan" : filtered() ? " match" : " this weekend");
+  $("#pc").textContent = saved.size ? "(" + saved.size + ")" : "";
+  if (!list.length) { $("#out").innerHTML = '<p class="empty"><b>' + (st.plan ? "Nothing saved yet" : "No matches") + "</b>" + (st.plan ? "Tap Save on any event and it will show up here." : "Try another day, another town, or clear the filters.") + "</p>"; return; }
+  $("#out").innerHTML = ORDER.map((c, ci) => { const g = list.filter(e => e.cat === c); if (!g.length) return "";
+    const sec = '<section class="band" aria-labelledby="h' + ci + '"><div class="band-head">' + ridgeSvg(ci + 3) + '<h2 id="h' + ci + '">' + esc(c) + '</h2><span class="n">' + g.length + '</span></div><ul class="grid">' + g.map(card).join("") + "</ul></section>";
+    return c === "Family & Kids" ? '<div class="kids-band">' + sec + "</div>" : sec; }).join("");
+}
+const update = fn => { if (document.startViewTransition && !reduce.matches) document.startViewTransition(() => { fn(); render(); }); else { fn(); render(); } };
+const press = (b, on) => b.setAttribute("aria-pressed", on ? "true" : "false");
+
+let qT; $("#q").addEventListener("input", e => { clearTimeout(qT); const v = e.target.value.trim().toLowerCase(); qT = setTimeout(() => { st.q = v; render(); }, 120); });
+$("#days").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; update(() => { st.day = b.dataset.v; [...$("#days").children].forEach(x => press(x, x === b)); }); });
+document.querySelectorAll(".pill.city").forEach(b => b.addEventListener("click", () => update(() => { const v = b.dataset.v; st.cities.has(v) ? st.cities.delete(v) : st.cities.add(v); press(b, st.cities.has(v)); })));
+[["#kidT","kid"],["#freeT","free"],["#topT","top"],["#planT","plan"]].forEach(([s,k]) => $(s).addEventListener("click", () => update(() => { st[k] = !st[k]; press($(s), st[k]); })));
+$("#cats").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; update(() => { st.cat = b.dataset.v; [...$("#cats").children].forEach(x => press(x, x === b)); }); });
+$("#out").addEventListener("click", e => { const b = e.target.closest(".save"); if (!b) return; const k = b.dataset.id; const on = !saved.has(k); on ? saved.add(k) : saved.delete(k); persist();
+  press(b, on); b.lastChild.textContent = on ? "Saved" : "Save"; b.setAttribute("aria-label", (on ? "Remove " : "Save ") + k + (on ? " from" : " to") + " my plan");
+  b.classList.remove("pop"); void b.offsetWidth; if (on) b.classList.add("pop");
+  $("#pc").textContent = saved.size ? "(" + saved.size + ")" : ""; if (st.plan) update(() => {}); });
+$("#reset").addEventListener("click", () => update(() => { Object.assign(st, {q:"", day:"all", cat:"all", kid:false, free:false, top:false, plan:false}); st.cities.clear(); $("#q").value = "";
+  document.querySelectorAll(".bar [aria-pressed]").forEach(b => press(b, b.dataset.v === "all")); }));
+const bar = $("#bar"), fbtn = $("#filtBtn");
+fbtn.addEventListener("click", () => { const open = !bar.classList.contains("open"); bar.classList.toggle("open", open); fbtn.setAttribute("aria-expanded", open); });
+const closeOnPageScroll = e => { if (bar.classList.contains("open") && !bar.contains(e.target) && matchMedia("(max-width:720px)").matches) { bar.classList.remove("open"); fbtn.setAttribute("aria-expanded", "false"); } };
+addEventListener("touchmove", closeOnPageScroll, {passive:true}); addEventListener("wheel", closeOnPageScroll, {passive:true});
+new IntersectionObserver(([en]) => $("#bar").classList.toggle("stuck", en.intersectionRatio < 1), {threshold:[1], rootMargin:"-1px 0px 0px 0px"}).observe($("#bar"));
+
+/* ---------- style guide route ---------- */
+function styleGuide(){
+  const cs = getComputedStyle(document.documentElement), tok = n => cs.getPropertyValue(n).trim();
+  const colors = ["--paper","--paper-2","--paper-3","--ink","--ink-2","--line","--haze","--haze-deep","--ember","--ember-text","--pine","--knx","--pf","--gat","--kid-bg","--free-bg"];
+  const steps = [["--step-5","Display numerals",'class="serif" style="font-size:var(--step-5);line-height:.8;font-style:italic"',"13–15"],["--step-4","Hero headline",'class="serif" style="font-size:var(--step-4);line-height:.95"',"This weekend"],["--step-3","Section heading",'class="serif" style="font-size:var(--step-3)"',"Live Music & Concerts"],["--step-2","Card title",'class="serif" style="font-size:var(--step-2)"',"Smoky Night Lights"],["--step-1","Lede",'style="font-size:var(--step-1)"',"What's on in the Smokies"],["--step-0","Body",'style="font-size:var(--step-0)"',"Immersive light-and-music show about the Smokies."],["--step--1","Meta / label",'style="font-size:var(--step--1)"',"Sat, 10 am · Free"]];
+  const list = names => names.map(n => "<div><b>" + n + "</b><br><code>" + esc(tok(n)) + "</code></div>").join("");
+  const sample = DATA.events.find(e => e.kid && e.free) || DATA.events[0];
+  $("#style-guide").innerHTML = '<p class="label"><a href="#top">← Back to the planner</a></p><h2 id="sg-h">Haze Hour style guide</h2>' +
+    '<p style="max-width:62ch;color:var(--ink-2)">Calm blue haze, ember warmth, deep pine. Instrument Serif carries the voice; Geist does the work. Every value below is a live CSS token, so this page updates with light and dark mode.</p>' +
+    "<h3>Color</h3><div class=\"swatches\">" + colors.map(n => '<div class="sw"><i style="background:var(' + n + ')"></i><div><b>' + n + "</b><code>" + esc(tok(n)) + "</code></div></div>").join("") + "</div>" +
+    '<h3>Type scale</h3><div class="scale">' + steps.map(([n,l,attr,txt]) => "<div><code>" + n + "<br>" + l + "</code><span " + attr + ">" + esc(txt) + "</span></div>").join("") + "</div>" +
+    '<h3>Space, radius, shadow, motion</h3><div class="tokens-list">' + list(["--s-1","--s-2","--s-3","--s-4","--s-5","--s-6","--s-7","--s-8","--s-9","--r-sm","--r-md","--r-lg","--r-pill","--sh-1","--sh-2","--dur-fast","--dur-med","--dur-slow","--ease-out","--ease-in-out"]) + "</div>" +
+    '<h3>Components</h3><div class="demo-row"><a class="btn btn-primary" href="#style-guide">Primary button</a><a class="btn btn-ghost" href="#style-guide">Ghost button</a><button type="button" class="pill">Pill</button><button type="button" class="pill" aria-pressed="true">Pill · on</button><button type="button" class="pill city" data-v="Gatlinburg" aria-pressed="true">Town · on</button><button type="button" class="pill kidp" aria-pressed="true">Kid-friendly · on</button></div>' +
+    '<div class="demo-row" style="margin-top:var(--s-4)"><span class="chip Knoxville">Knoxville</span><span class="chip Pigeon">Pigeon Forge</span><span class="chip Gatlinburg">Gatlinburg</span><span class="chip t">Top pick</span><span class="chip k">Kid-friendly</span><span class="chip f">Free</span></div>' +
+    '<h3>Event card</h3><ul class="grid" style="max-width:380px">' + card(sample) + "</ul>";
+}
+function route(){
+  const sg = location.hash === "#style-guide";
+  $("#style-guide").hidden = !sg; $("#events").hidden = sg; $("#bar").hidden = sg; document.querySelector(".brief").hidden = sg;
+  if (sg) { styleGuide(); $("#style-guide").scrollIntoView(); }
+}
+addEventListener("hashchange", route);
+renderTop(); render(); route();
+</script>
+
+</body>
+</html>
